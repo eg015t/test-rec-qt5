@@ -85,8 +85,7 @@ void JitterBuffer::clearAndWrite()
 {
     lastSequenceNumber_ = 0;
 
-    while (buffList_.count() != 0)
-        removeSlot(0);
+    while (buffList_.count() != 0) removeSlot(0);
 }
 
 //Заполнить пакет нулями
