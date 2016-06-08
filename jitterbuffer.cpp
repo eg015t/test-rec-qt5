@@ -1,5 +1,8 @@
 #include "jitterbuffer.h"
 
+#define SAMPLING_FREQUENCY 8000
+#define BIT_REGISTER 8
+
 JitterBuffer::JitterBuffer(int packetSize, //Размер пакета в мс
                            int bufferSize, //Размер буфера
                            QObject *parent) : QObject(parent),
@@ -8,7 +11,7 @@ JitterBuffer::JitterBuffer(int packetSize, //Размер пакета в мс
     bufferSize_(bufferSize),
     lastSequenceNumber_(0)
 {
-    //Тайме - если секунду не было входящих пакетов - освобождаем буфер
+    //Таймер - если секунду не было входящих пакетов - освобождаем буфер
     betweenRcp = new QTimer(this);
     connect(betweenRcp, SIGNAL(timeout()), this, SLOT(clearAndWrite()));
     betweenRcp->setInterval(1000);
@@ -87,9 +90,15 @@ void JitterBuffer::clearAndWrite()
 }
 
 //Заполнить пакет нулями
+//Размер цифрового моноаудиофайла измеряется по формуле: A = D*T*i,
 QByteArray JitterBuffer::getGarbagePacket()
 {
     QByteArray retBA;
+    retBA.clear();
+
+    int a = SAMPLING_FREQUENCY * packetSize_ / 1000 * BIT_REGISTER / 8;
+
+    for (int i = 0; i < a; i++) retBA.append('0');
 
     return retBA;
 }

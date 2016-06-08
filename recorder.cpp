@@ -31,7 +31,7 @@ VoiceRecorder::VoiceRecorder(QHostAddress Ip,     //IP-адресс Call Agent
     recFile_.open(QIODevice::WriteOnly);
 
 #ifdef _DEBUG
-    jittBuffer_ = new JitterBuffer(PACKET_SIZE_MS, BUFFER_SIZE);
+   jittBuffer_ = new JitterBuffer(PACKET_SIZE_MS, BUFFER_SIZE);
     ResponseMgcpStruct respTest = parseMgcpReturn(QByteArray(CRCX_TEST_RET1));
     printStatusMessage("[%d] test %d (%s)", respTest.transId,
                        respTest.code, respTest.comment.toStdString().c_str());
