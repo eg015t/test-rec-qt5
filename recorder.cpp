@@ -31,13 +31,13 @@ VoiceRecorder::VoiceRecorder(QHostAddress Ip,     //IP-адресс Call Agent
     recFile_.open(QIODevice::WriteOnly);
 
 #ifdef _DEBUG
-   jittBuffer_ = new JitterBuffer(PACKET_SIZE_MS, BUFFER_SIZE);
+    /*    jittBuffer_ = new JitterBuffer(PACKET_SIZE_MS, BUFFER_SIZE);
     ResponseMgcpStruct respTest = parseMgcpReturn(QByteArray(CRCX_TEST_RET1));
     printStatusMessage("[%d] test %d (%s)", respTest.transId,
                        respTest.code, respTest.comment.toStdString().c_str());
     bindRtpSocket(respTest);
     connect(jittBuffer_, SIGNAL(packetReady(QByteArray)),
-            this, SLOT(saveFromBuffer(QByteArray)));
+            this, SLOT(saveFromBuffer(QByteArray)));*/
 #endif
 }
 
@@ -79,15 +79,49 @@ void VoiceRecorder::createConnection(QString callId,    //Идентификат
 }
 
 //Удалить соединение
-void VoiceRecorder::deleteConnection()
+void VoiceRecorder::deleteConnection(QString version,     //Версия протокола
+                                     QString connectionId //Идентификатор подключения
+                                     )
 {
+    transIdCounter_++;
 
+    QByteArray datagram = "DLCX";
+    datagram.append(' '); datagram.append(QString::number(transIdCounter_));
+    datagram.append(' '); datagram.append(endPoint_);
+    datagram.append(' '); datagram.append("MGCP");
+    datagram.append(' '); datagram.append(version); datagram.append("\r\n");
+
+    datagram.append("I: "); datagram.append(connectionId); datagram.append("\r\n");
+
+    mgcpUdpSocket_->writeDatagram(datagram.data(), datagram.size(), Ip_, remotePort_);
 }
 
 //Изменить соединение
-void VoiceRecorder::modifyConnection()
+//ex: modifyConnection("1234", "0.1", connectionId, "ca@ca1.whatever.net", "sendrecv");
+void VoiceRecorder::modifyConnection(QString callId,         //Идентификатор вызова
+                                     QString version,        //Версия протокола
+                                     QString connectionId,   //Идентификатор подключения
+                                     QString notifiedEntity, //Уведомляемый объект
+                                     QString mode            //Режим
+                                     )
 {
+    transIdCounter_++;
 
+    QByteArray datagram = "MDCX";
+    datagram.append(' '); datagram.append(QString::number(transIdCounter_));
+    datagram.append(' '); datagram.append(endPoint_);
+    datagram.append(' '); datagram.append("MGCP");
+    datagram.append(' '); datagram.append(version); datagram.append("\r\n");
+
+    datagram.append("C: "); datagram.append(callId); datagram.append("\r\n");
+
+    datagram.append("I: "); datagram.append(connectionId); datagram.append("\r\n");
+
+    datagram.append("N: "); datagram.append(notifiedEntity); datagram.append("\r\n");
+
+    datagram.append("M: "); datagram.append(mode); datagram.append("\r\n");
+
+    mgcpUdpSocket_->writeDatagram(datagram.data(), datagram.size(), Ip_, remotePort_);
 }
 
 //Обработка приема MGCP-датаграмм
@@ -114,6 +148,8 @@ void VoiceRecorder::readMgcpDatagrams()
             if ((mgcpDatagram.code >= 200) && (mgcpDatagram.code <= 299)) {
                 printStatusMessage("[%d] completed successfully: %d (%s)", mgcpDatagram.transId,
                                    mgcpDatagram.code, mgcpDatagram.comment.toStdString().c_str());
+
+                connectionId_ = mgcpDatagram.connectionId;
 
                 //Запуск приема RTP-сообщений
                 if (getAudioPort(mgcpDatagram.metadata) != 0) {
@@ -206,7 +242,9 @@ void VoiceRecorder::showStatics()
 void VoiceRecorder::saveFromBuffer(QByteArray inDatagram)
 {
     nBytesRec_ = nBytesRec_ + recFile_.write(inDatagram);
+
     nPacketRtpWrite_++;
+
     showStatics();
 }
 
@@ -234,7 +272,9 @@ void VoiceRecorder::bindRtpSocket(ResponseMgcpStruct mgcpDatagram  //Ответ 
 void VoiceRecorder::closeApplication()
 {
     //qDebug() << "Shutdown application CTRL+C.";
-    //jittBuffer_->clearAndWrite();
+    deleteConnection("0.1", connectionId_);
+
     recFile_.close();
+
     restoreScreen();
 }
