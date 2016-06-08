@@ -60,6 +60,8 @@ private slots:
     void readRtpDatagrams();
     void createConnection(QString callId, QString version, int period,
                           QString codeck, QString mode);
+    void deleteConnection();
+    void modifyConnection();
     int getAudioPort(QList <MetadataStruct> metadataList);
     void bindRtpSocket(ResponseMgcpStruct MgcpDatagram);
     void saveFromBuffer(QByteArray inDatagram);

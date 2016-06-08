@@ -78,6 +78,18 @@ void VoiceRecorder::createConnection(QString callId,    //Идентификат
     mgcpUdpSocket_->writeDatagram(datagram.data(), datagram.size(), Ip_, remotePort_);
 }
 
+//Удалить соединение
+void VoiceRecorder::deleteConnection()
+{
+
+}
+
+//Изменить соединение
+void VoiceRecorder::modifyConnection()
+{
+
+}
+
 //Обработка приема MGCP-датаграмм
 void VoiceRecorder::readMgcpDatagrams()
 {
