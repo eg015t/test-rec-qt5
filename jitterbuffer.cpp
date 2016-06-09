@@ -23,9 +23,10 @@ void JitterBuffer::removeSlot(int num //Номер элемента
 {
     lastSequenceNumber_ = buffList_.at(num).sequenceNumber;
 
-    emit packetReady(buffList_.at(num).media);
-
+    QByteArray sndMedia = buffList_.at(num).media;
     buffList_.removeAt(num);
+
+    emit packetReady(sndMedia);
 
     betweenRcp->start();
 }

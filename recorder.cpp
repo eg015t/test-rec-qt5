@@ -31,13 +31,13 @@ VoiceRecorder::VoiceRecorder(QHostAddress Ip,     //IP-адресс Call Agent
     recFile_.open(QIODevice::WriteOnly);
 
 #ifdef _DEBUG
-    /*    jittBuffer_ = new JitterBuffer(PACKET_SIZE_MS, BUFFER_SIZE);
+        jittBuffer_ = new JitterBuffer(PACKET_SIZE_MS, BUFFER_SIZE);
     ResponseMgcpStruct respTest = parseMgcpReturn(QByteArray(CRCX_TEST_RET1));
     printStatusMessage("[%d] test %d (%s)", respTest.transId,
                        respTest.code, respTest.comment.toStdString().c_str());
     bindRtpSocket(respTest);
     connect(jittBuffer_, SIGNAL(packetReady(QByteArray)),
-            this, SLOT(saveFromBuffer(QByteArray)));*/
+            this, SLOT(saveFromBuffer(QByteArray)));
 #endif
 }
 
@@ -221,16 +221,16 @@ void VoiceRecorder::readRtpDatagrams()
 //Вывести на экран статистику по работе приложения
 void VoiceRecorder::showStatics()
 {
-    /*QString bufferBusyString;
+    QString bufferBusyString;
     bufferBusyString.clear();
 
     int bufferBusy = jittBuffer_->getBusySlotCount();
     for (int i = 0; i < BUFFER_SIZE; i++)
         if (i < bufferBusy) bufferBusyString.append('|');
         else bufferBusyString.append(' ');
-    bufferBusyString.prepend('['); bufferBusyString.append(']');*/
+    bufferBusyString.prepend('['); bufferBusyString.append(']');
 
-    printInfoMessage(4, "Jitter-Buffer", QString::number(jittBuffer_->getBusySlotCount()), 3);
+    printInfoMessage(4, "Jitter-Buffer", bufferBusyString, 3);
     printInfoMessage(5, "Total packets received", QString::number(nPacketRtpRecieve_), 3);
     printInfoMessage(6, "Total packets written", QString::number(nPacketRtpWrite_), 3);
     printInfoMessage(7, "Total packets lost", QString::number(jittBuffer_->getPacketLostCount()), 3);
