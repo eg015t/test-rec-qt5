@@ -9,7 +9,7 @@
 #include "audio.h"
 #include "jitterbuffer.h"
 
-#ifdef _DEBUG
+/*#ifdef _DEBUG
 #define CRCX_TEST_RET1 "200 2 OK\r\n"                           \
     "I: 1\r\n"                                                  \
     "\r\n"                                                      \
@@ -34,7 +34,7 @@
 
 #define DLCX_TEST_RET1 "250 3205 OK\r\n"                        \
     "P: ps=1245, os=62345, pr=780, or=45123, pl=10, ji=26, la=4"
-#endif
+#endif*/
 
 class VoiceRecorder : public QObject
 {

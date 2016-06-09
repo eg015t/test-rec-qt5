@@ -30,7 +30,7 @@ VoiceRecorder::VoiceRecorder(QHostAddress Ip,     //IP-адресс Call Agent
     recFile_.setFileName(fileRecName_);
     recFile_.open(QIODevice::WriteOnly);
 
-#ifdef _DEBUG
+/*#ifdef _DEBUG
         jittBuffer_ = new JitterBuffer(PACKET_SIZE_MS, BUFFER_SIZE);
     ResponseMgcpStruct respTest = parseMgcpReturn(QByteArray(CRCX_TEST_RET1));
     printStatusMessage("[%d] test %d (%s)", respTest.transId,
@@ -38,7 +38,7 @@ VoiceRecorder::VoiceRecorder(QHostAddress Ip,     //IP-адресс Call Agent
     bindRtpSocket(respTest);
     connect(jittBuffer_, SIGNAL(packetReady(QByteArray)),
             this, SLOT(saveFromBuffer(QByteArray)));
-#endif
+#endif*/
 }
 
 //Инициализация сокета для приема MGCP-датаграмм
